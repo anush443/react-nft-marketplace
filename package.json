@@ -15,7 +15,7 @@
     "react-scripts": "5.0.1",
     "reactstrap": "^9.1.4",
     "web-vitals": "^2.1.4",
-    "web3uikit": "^1.0.4"
+    "web3uikit": "^0.1.159"
   },
   "scripts": {
     "start": "react-scripts start",
