@@ -141,7 +141,7 @@ async function main() {
     itemCancelledOptions,
     { useMasterKey: true }
   );
-
+  console.log(listedResponse);
   if (
     listedResponse.success &&
     boughtResponse.success &&
