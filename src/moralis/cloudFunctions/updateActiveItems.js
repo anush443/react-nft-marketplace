@@ -1,3 +1,5 @@
+const { default: Moralis } = require("moralis");
+
 Moralis.Cloud.afterSave("ItemListed", async function (request) {
   const confirmed = request.object.get("confirmed");
   const logger = Moralis.Cloud.getLogger();
@@ -34,7 +36,6 @@ Moralis.Cloud.afterSave("ItemCancelled", async function (request) {
     query.equalTo("tokenId", request.object.get("tokenId"));
     logger.info(`Marketplace | query ${query}`);
     const cancelledItem = await query.first();
-
     if (cancelledItem) {
       logger.info(
         `Deleting ${request.object.get(
@@ -42,6 +43,34 @@ Moralis.Cloud.afterSave("ItemCancelled", async function (request) {
         )} at address ${request.object.get("address")} since it was cancelled `
       );
       await cancelledItem.destroy();
+    } else {
+      logger.info(
+        `No Item found with ${request.object.get(
+          "tokenId"
+        )} at address ${request.object.get("address")}`
+      );
+    }
+  }
+});
+
+Moralis.Cloud.afterSave("ItemBought", async function (request) {
+  const confirmed = request.object.get("confirmed");
+  const logger = Moralis.Cloud.getLogger();
+  logger.info(`Marketplace | ${request.object}`);
+  if (confirmed) {
+    const ActiveItem = Moralis.Object.extend("ActiveItem");
+    const query = new Moralis.Query(ActiveItem);
+    query.equalTo("marketplaceAddress", request.object.get("address"));
+    query.equalTo("nftAddress", request.object.get("nftAddress"));
+    query.equalTo("tokenId", request.object.get("tokenId"));
+    logger.info(`Marketplace | query ${query}`);
+    const boughtItem = await query.first();
+    if (boughtItem) {
+      logger.info(
+        `Deleting bought item ${request.object.get(
+          "tokenId"
+        )} tokenId at address ${request.object.get("address")}`
+      );
     } else {
       logger.info(
         `No Item found with ${request.object.get(
