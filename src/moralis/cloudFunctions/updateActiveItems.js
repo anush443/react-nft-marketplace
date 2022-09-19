@@ -1,5 +1,3 @@
-const { default: Moralis } = require("moralis");
-
 Moralis.Cloud.afterSave("ItemListed", async function (request) {
   const confirmed = request.object.get("confirmed");
   const logger = Moralis.Cloud.getLogger();
@@ -71,6 +69,7 @@ Moralis.Cloud.afterSave("ItemBought", async function (request) {
           "tokenId"
         )} tokenId at address ${request.object.get("address")}`
       );
+      await boughtItem.destroy();
     } else {
       logger.info(
         `No Item found with ${request.object.get(
