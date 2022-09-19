@@ -5,6 +5,18 @@ Moralis.Cloud.afterSave("ItemListed", async function (request) {
   if (confirmed) {
     logger.info("Found item");
     const ActiveItem = Moralis.Object.extend("ActiveItem");
+    const query = new Moralis.Query(ActiveItem);
+    query.equalTo("marketplaceAddress", request.object.get("address"));
+    query.equalTo("nftAddress", request.object.get("nftAddress"));
+    query.equalTo("tokenId", request.object.get("tokenId"));
+    query.equalTo("seller", request.object.get("seller"));
+    const alreadyListedItem = await query.first();
+    if (alreadyListedItem) {
+      logger.info(
+        `Deleting alreadyListedItem ${request.object.get("objectId")}`
+      );
+      await alreadyListedItem.destroy();
+    }
     const activeItem = new ActiveItem();
     activeItem.set("marketplaceAddress", request.object.get("address"));
     activeItem.set("nftAddress", request.object.get("nftAddress"));
