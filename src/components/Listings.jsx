@@ -32,6 +32,7 @@ const Listings = () => {
                 price={price}
                 seller={seller}
                 tokenId={tokenId}
+                key={tokenId}
               />
             </>
           );

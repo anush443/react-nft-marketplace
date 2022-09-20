@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useWeb3Contract, useMoralis } from "react-moralis";
+import { Card } from "web3uikit";
 import basicNftAbi from "../constants/BasicNft.json";
 
 const NftCard = ({
@@ -21,17 +22,17 @@ const NftCard = ({
       tokenId: tokenId,
     },
   });
+
   const updateUI = async () => {
     const tokenUri = await getTokenUri();
     if (tokenUri) {
       const requestUrl = tokenUri.replace("ipfs://", "https://ipfs.io/ipfs/");
       const tokenUriResponse = await (await fetch(requestUrl)).json();
-      console.log(tokenUriResponse);
-      const imageURI = tokenUriResponse["image"];
-      const imageUriUrl = imageURI.replace("ipfs://", "https://ipfs.io/ipfs/");
-      setImageUri(imageUri);
+      const imageUri = tokenUriResponse.image;
+      const imageUriUrl = imageUri.replace("ipfs://", "https://ipfs.io/ipfs/");
+      setImageUri(imageUriUrl);
       setName(tokenUriResponse.name);
-      setDescription(tokenUriResponse);
+      setDescription(tokenUriResponse.description);
     }
   };
 
@@ -40,7 +41,17 @@ const NftCard = ({
       updateUI();
     }
   }, [isWeb3Enabled]);
-  return <></>;
+  return (
+    <>
+      {imageUri && (
+        <Card description={description} title={name}>
+          <div>
+            <img src={imageUri} alt={tokenId} className="h-[200px] w-[200px]" />
+          </div>
+        </Card>
+      )}
+    </>
+  );
 };
 
 export default NftCard;
