@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
+import basicNftAbi from "../constants/BasicNft.json";
 import { useWeb3Contract, useMoralis } from "react-moralis";
 import { Card } from "web3uikit";
-import basicNftAbi from "../constants/BasicNft.json";
+import { ethers } from "ethers";
 
 const NftCard = ({
   marketplaceAddress,
@@ -43,13 +44,20 @@ const NftCard = ({
   }, [isWeb3Enabled]);
   return (
     <>
-      {imageUri && (
-        <Card description={description} title={name}>
-          <div>
-            <img src={imageUri} alt={tokenId} className="h-[200px] w-[200px]" />
-          </div>
-        </Card>
-      )}
+      <div>
+        {imageUri && (
+          <Card description={description} title={name}>
+            <div className="flex flex-col items-center space-y-4 py-2 ">
+              <div>#{tokenId}</div>
+              <div className="text-sm">Owned by {seller}</div>
+              <div>
+                <img src={imageUri} alt={tokenId} />
+              </div>
+              <div>{ethers.utils.formatUnits(price, "ether")}ETH</div>
+            </div>
+          </Card>
+        )}
+      </div>
     </>
   );
 };
