@@ -1,5 +1,6 @@
 import React from "react";
 import { useMoralisQuery } from "react-moralis";
+import NftCard from "./NftCard";
 
 const Listings = () => {
   const {
@@ -16,7 +17,6 @@ const Listings = () => {
         <div>Loading...</div>
       ) : (
         nftListings.map((nft) => {
-          console.log(nft.attributes);
           const { marketplaceAddress, nftAddress, price, seller, tokenId } =
             nft.attributes;
           return (
@@ -26,6 +26,13 @@ const Listings = () => {
               <div> {price}</div>
               <div> {seller}</div>
               <div> {tokenId}</div>
+              <NftCard
+                marketplaceAddress={marketplaceAddress}
+                nftAddress={nftAddress}
+                price={price}
+                seller={seller}
+                tokenId={tokenId}
+              />
             </>
           );
         })
