@@ -53,9 +53,8 @@ const UpdateListingModal = ({
       "info",
       `Successfully changed to ${updatedListingPrice} Eth`
     );
-
+    setUpdatedListingprice(0);
     closeModal();
-    updateListingPrice(0);
   };
 
   const handleError = async (error) => {
