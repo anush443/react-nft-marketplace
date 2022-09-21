@@ -3,6 +3,7 @@ import basicNftAbi from "../constants/BasicNft.json";
 import { useWeb3Contract, useMoralis } from "react-moralis";
 import { Card } from "web3uikit";
 import { ethers } from "ethers";
+import UpdateListingModal from "./UpdateListingModal";
 
 const NftCard = ({
   marketplaceAddress,
@@ -14,7 +15,9 @@ const NftCard = ({
   const [imageUri, setImageUri] = useState("");
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
-  const { isWeb3Enabled } = useMoralis();
+  const [showModal, setShowModal] = useState(false);
+  const { isWeb3Enabled, account } = useMoralis();
+
   const { runContractFunction: getTokenUri } = useWeb3Contract({
     abi: basicNftAbi,
     contractAddress: nftAddress,
@@ -23,6 +26,9 @@ const NftCard = ({
       tokenId: tokenId,
     },
   });
+
+  const userIsOwner = seller === account;
+  const trucSellerAddress = userIsOwner ? "You" : seller;
 
   const updateUI = async () => {
     const tokenUri = await getTokenUri();
@@ -42,14 +48,33 @@ const NftCard = ({
       updateUI();
     }
   }, [isWeb3Enabled]);
+
+  const handleCardClick = () => {
+    userIsOwner ? setShowModal(true) : console.log("do");
+  };
+
+  const handleModalClose = () => {
+    setShowModal(false);
+  };
   return (
     <>
+      <UpdateListingModal
+        marketplaceAddress={marketplaceAddress}
+        nftAddress={nftAddress}
+        tokenId={tokenId}
+        isVisible={showModal}
+        closeModal={handleModalClose}
+      />
       <div>
         {imageUri && (
-          <Card description={description} title={name}>
+          <Card
+            description={description}
+            title={name}
+            onClick={handleCardClick}
+          >
             <div className="flex flex-col items-center space-y-4 py-2 ">
               <div>#{tokenId}</div>
-              <div className="text-sm">Owned by {seller}</div>
+              <div className="text-sm">Owned by {trucSellerAddress}</div>
               <div>
                 <img src={imageUri} alt={tokenId} />
               </div>
