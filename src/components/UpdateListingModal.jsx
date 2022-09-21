@@ -21,9 +21,7 @@ const UpdateListingModal = ({
     params: {
       nftAddress: nftAddress,
       tokenId: tokenId,
-      newPrice: ethers.utils
-        .parseUnits(updatedListingPrice, "ether")
-        .toString(),
+      newPrice: ethers.utils.parseEther(updatedListingPrice).toString(),
     },
   });
 

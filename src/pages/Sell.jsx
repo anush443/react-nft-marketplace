@@ -2,6 +2,7 @@ import React from "react";
 import basicNftAbi from "../constants/BasicNft.json";
 import NftMarketplace from "../constants/NftMarketplace.json";
 import networkMapping from "../constants/networkMapping.json";
+import { ethers } from "ethers";
 import Navbar from "../components/Navbar";
 import { useWeb3Contract, useMoralis } from "react-moralis";
 import { Form, useNotification } from "web3uikit";
@@ -37,10 +38,9 @@ const Sell = () => {
   };
 
   const approveAndList = async (data) => {
-    console.log(data);
     const nftAddress = data.data[0].inputResult;
     const tokenId = data.data[1].inputResult;
-    const price = data.data[2].inputResult;
+    const price = ethers.utils.parseEther(data.data[2].inputResult).toString();
 
     const approveOptions = {
       abi: basicNftAbi,
