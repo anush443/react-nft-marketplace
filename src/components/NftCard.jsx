@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import basicNftAbi from "../constants/BasicNft.json";
+import NftMarketplace from "../constants/NftMarketplace.json";
 import { useWeb3Contract, useMoralis } from "react-moralis";
-import { Card } from "web3uikit";
+import { Card, useNotification } from "web3uikit";
 import { ethers } from "ethers";
 import UpdateListingModal from "./UpdateListingModal";
 
@@ -23,6 +24,17 @@ const NftCard = ({
     contractAddress: nftAddress,
     functionName: "tokenURI",
     params: {
+      tokenId: tokenId,
+    },
+  });
+
+  const { runContractFunction: buyNft } = useWeb3Contract({
+    abi: NftMarketplace,
+    contractAddress: marketplaceAddress,
+    msgValue: price,
+    functionName: "buyItem",
+    params: {
+      nftAddress: nftAddress,
       tokenId: tokenId,
     },
   });
@@ -49,8 +61,44 @@ const NftCard = ({
     }
   }, [isWeb3Enabled]);
 
+  const dispatch = useNotification();
+
+  const handleSuccessOrErrorNotification = async (type, message) => {
+    dispatch({
+      type: type,
+      title: "Transaction Notification",
+      message: message,
+      position: "topR",
+      icon: "bell",
+    });
+  };
+
+  const handleSuccess = async (tx) => {
+    await tx.wait(1);
+
+    await handleSuccessOrErrorNotification(
+      "info",
+      `Successfully bought nft for ${ethers.utils.formatUnits(
+        price,
+        "ether"
+      )} Eth`
+    );
+  };
+
+  const handleError = async (error) => {
+    console.log(error);
+    handleSuccessOrErrorNotification("error", "Something went wrong");
+  };
+
+  const handleNftBuy = async () => {
+    await buyNft({
+      onSuccess: handleSuccess,
+      onError: (error) => handleError(error),
+    });
+  };
+
   const handleCardClick = () => {
-    userIsOwner ? setShowModal(true) : console.log("do");
+    userIsOwner ? setShowModal(true) : handleNftBuy();
   };
 
   const handleModalClose = () => {

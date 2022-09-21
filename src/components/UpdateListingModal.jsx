@@ -11,7 +11,7 @@ const UpdateListingModal = ({
   isVisible,
   closeModal,
 }) => {
-  const [updatedListingPrice, setUpdatedListingprice] = useState(0);
+  const [updatedListingPrice, setUpdatedListingprice] = useState("0");
   const [showErrorMsg, setShowErrorMsg] = useState(false);
 
   const { runContractFunction: updateListingPrice } = useWeb3Contract({
@@ -21,7 +21,9 @@ const UpdateListingModal = ({
     params: {
       nftAddress: nftAddress,
       tokenId: tokenId,
-      newPrice: updatedListingPrice,
+      newPrice: ethers.utils
+        .parseUnits(updatedListingPrice, "ether")
+        .toString(),
     },
   });
 
@@ -53,7 +55,6 @@ const UpdateListingModal = ({
       "info",
       `Successfully changed to ${updatedListingPrice} Eth`
     );
-    setUpdatedListingprice(0);
     closeModal();
   };
 
