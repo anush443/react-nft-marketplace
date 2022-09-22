@@ -91,7 +91,16 @@ const Sell = () => {
       onError: (error) => console.log(error),
     });
   };
-
+  const handleWithdrawSuccess = async (tx) => {
+    await tx.wait(1);
+    await handleSuccessOrErrorNotification("info", `Withdraw all proceeds`);
+  };
+  const handleWithdraw = async () => {
+    await withdrawSellerProceeds({
+      onSuccess: handleWithdrawSuccess,
+      onError: (error) => console.log(error),
+    });
+  };
   const updateUI = async () => {
     const proceeds = await getSellerProceeds({
       onError: (error) => console.log(error),
@@ -143,7 +152,7 @@ const Sell = () => {
             btnText="Withdraw Proceeds"
             chain={sellerProceeds}
             chainType="ETH"
-            onClick={hnadleWithrdraw}
+            onClick={handleWithdraw}
           />
         </div>
       </div>
